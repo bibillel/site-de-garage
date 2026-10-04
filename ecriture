@@ -1,0 +1,9 @@
+app.post('./submit', (req, res) ) => {
+  const client = prisma.client.create({
+    data: {
+      firstName: req.body.firstname,
+      lastName: req.body.lastName
+    })
+  });
+  res.status(201).json({client });
+}
