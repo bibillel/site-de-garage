@@ -1,9 +1,31 @@
-app.post('./submit', (req, res) ) => {
-  const client = prisma.client.create({
+
+
+
+
+app.post('/submit', async (req, res) => {
+    const { email, phone, lastName, firstName} = req.body
+    const emailClean = typeof email === "string" ? email.trim() : "";
+    const lastNameClean = typeof lastName === "string" ? lastName.trim() : "";
+    const firstNameClean = typeof firstName === "string" ? firstName.trim() : "";
+
+    const phoneClean = typeof phone === "string" ? phone.trim() : "";
+    if (!lastNameClean && !firstNameClean) {
+      return res.status(400).json({
+        message: "Un nom ou un prénom est obligatoire"
+      })
+    }
+    if (!emailClean && !phoneClean) {
+      return res.status(400).json({
+      message: "Un email ou un téléphone est obligatoire."
+      });
+    }
+    const client = await prisma.client.create({
     data: {
-      firstName: req.body.firstname,
-      lastName: req.body.lastName
-    })
-  });
-  res.status(201).json({client });
-}
+      firstName: firstNameClean || null,
+      lastName: lastNameClean || null,
+      email:  emailClean || null,
+      phone:  phoneClean || null,
+  }
+});
+    return res.status(201).json({ client : client});
+})
